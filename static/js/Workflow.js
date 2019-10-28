@@ -7,6 +7,7 @@ class Workflow {
         this.recipients_list = [];
         this.recipient_group = [];
         this.merge_field_group = [];
+        this.deadline = "";
     }
 
     setAgreementName(agreement_name) {
@@ -129,6 +130,22 @@ class Workflow {
         }
     }
 
+    updateDeadline(today){
+        /***
+         * This function will update the deadline.
+         * @param {Date} today The date object for today
+         */
+
+        const date_input = document.getElementById('deadline_input').value;
+        
+        const today_date = new Date(today);
+        const selected_date = new Date(date_input);
+
+        const diffTime = Math.abs(selected_date - today_date);
+        this.deadline = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+    }
+
     clearData(){
         /***
          * This function clears data from the workflow.
@@ -146,13 +163,26 @@ class Workflow {
          * This function returns the json data formate of the workflow
          */
 
-        return {
-            "documentCreationInfo": {
-                "fileInfos": this.file_infos,
-                "name": this.agreement_name,
-                "recipientsListInfo": this.recipients_list,
-                "mergeFieldInfo": this.merge_field_group
-            }
-        };
+        if( this.deadline === ""){
+            return {
+                "documentCreationInfo": {
+                    "fileInfos": this.file_infos,
+                    "name": this.agreement_name,
+                    "recipientsListInfo": this.recipients_list,
+                    "mergeFieldInfo": this.merge_field_group
+                }
+            };
+        }
+        else{
+            return {
+                "documentCreationInfo": {
+                    "fileInfos": this.file_infos,
+                    "name": this.agreement_name,
+                    "recipientsListInfo": this.recipients_list,
+                    "mergeFieldInfo": this.merge_field_group,
+                    "daysUntilSigningDeadline": this.deadline
+                }
+            };
+        }
     }
 }

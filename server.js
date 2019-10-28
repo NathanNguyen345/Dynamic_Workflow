@@ -13,10 +13,10 @@ const upload = multer({ dest: 'uploads/' });
 // HTTPS & Path
 const https = require('https');
 const path = require('path');
-const httpsOptions = {
-    cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
-    key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
-}
+// const httpsOptions = {
+//     cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
+//     key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
+// }
 
 // js-yaml
 const yaml = require('js-yaml');

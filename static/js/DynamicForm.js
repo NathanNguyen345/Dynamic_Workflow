@@ -8,6 +8,7 @@ class DynamicForm {
         this.recipeint_group_id = 0;
         this.file_info = [];
         this.merge_fields = [];
+        this.deadline = null;
         this.features = features;
     }
 
@@ -21,6 +22,7 @@ class DynamicForm {
         this.removeRecipientForm('recipient_section');
         this.removeRecipientForm('upload_section');
         this.removeRecipientForm('merge_section');
+        this.removeRecipientForm('deadline_section');
         this.removeRecipientForm('button_section');
 
         // Get workflow information
@@ -69,6 +71,14 @@ class DynamicForm {
                 this.merge_fields[counter].createMergeFieldLabel();
                 this.merge_fields[counter].createMergeFieldInput();
             }
+        }
+
+        // Get Deadline information
+        this.deadline = new Deadline(this.parent_div, this.data['expirationInfo']);
+        if(this.deadline.visable){
+            this.deadline.createDeadlineDiv();
+            this.deadline.createCheckbox();
+            this.deadline.createSubDiv();
         }
 
         this.createRecipientFormButton(this.agreement_data, this.workflow_data);
@@ -198,6 +208,9 @@ class DynamicForm {
             async_wf_obj.updateRecipientGroup(wf_data['recipientsListInfo'], this.recipient_groups);
             async_wf_obj.updateFileInfos(this.file_info);
             async_wf_obj.updateMergeFieldInfos(this.merge_fields);
+            if(this.deadline.checked){
+                async_wf_obj.updateDeadline(this.deadline.today_date);
+            }
 
             var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
                 method: 'POST',
