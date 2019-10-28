@@ -22,7 +22,7 @@ class RecipientGroup{
         this.parent_div.children['recipient_section'].append(recipient_div);
 
         // Append to parent
-        this.target_div = recipient_div
+        this.target_div = recipient_div;
     }
 
     createRecipientLabelField() {
@@ -82,7 +82,7 @@ class RecipientGroup{
         // has been reported. Once this bug is fixed, it will be enabled in
         // the next version.
 
-        // If group is a recipient group
+        // // If group is a recipient group
         // if (this.recipient_group_data['maxListCount'] > 1) {
         //     this.createAdditionalRecipientInput(input.id);
         //     this.removeParticipentButton(this.target_div);

@@ -147,3 +147,12 @@ h4{
     float: right;
     padding: 5px;
 }
+
+.checkbox_input{
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.error_msg{
+    color: red;
+}

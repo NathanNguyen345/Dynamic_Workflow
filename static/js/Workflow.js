@@ -6,7 +6,9 @@ class Workflow {
         this.file_infos = [];
         this.recipients_list = [];
         this.recipient_group = [];
+        this.carbon_copy_group = [];
         this.merge_field_group = [];
+        this.pass_option = "";
         this.deadline = "";
     }
 
@@ -90,6 +92,50 @@ class Workflow {
         this.recipients_list.push(data);
     }
 
+    updateCcGroup(cc_group_data, cc_group) {
+        /***
+         * This function will update the carbon_copy_group list
+         * @param {String} cc_group_data Cc recipients from API default value
+         * @param {Object} cc_group Object of cc divs from web form
+         */
+
+        const editable = cc_group_data['editable'];
+        const cc_list = cc_group_data['defaultValue'].split(",");
+        var add_to_cc_list = [];
+
+        for (let counter = 0; counter < cc_group.length; counter++) {
+            if(!(editable)){
+                if(counter < cc_list.length){
+                    add_to_cc_list.push(cc_list[counter]);  
+                }
+            }
+            else{
+                add_to_cc_list.push(cc_group[counter].email);
+            }
+        }
+
+        this.addToCcGroup(cc_group_data['name'], add_to_cc_list)
+
+    }
+
+    addToCcGroup(name, add_to_cc_list) {
+        /***
+         * This function will add the json to the carbon copy group
+         * @param {String} name The name of the cc group
+         * @param {Object} add_to_cc_list An array of cc emails
+         */
+
+        var data = [
+            {
+                "name": name,
+                "emails": add_to_cc_list
+            }
+        ]
+
+        this.carbon_copy_group.push(data);
+
+    }
+
     updateFileInfos(file_infos) {
         /***
          * This function updates the file infos
@@ -146,6 +192,21 @@ class Workflow {
 
     }
 
+    createOpenPass(pass, protection) {
+        /***
+         * This function builds out the security option.
+         * @param {String} pass The pass for the agreement
+         * @param {Boolean} protection The trigger for protection option
+         */
+
+        var data = {
+            "openPassword": pass,
+            "protectOpen": protection
+        }
+        
+        this.pass_option = data;
+    }
+
     clearData(){
         /***
          * This function clears data from the workflow.
@@ -169,6 +230,8 @@ class Workflow {
                     "fileInfos": this.file_infos,
                     "name": this.agreement_name,
                     "recipientsListInfo": this.recipients_list,
+                    "ccs": this.carbon_copy_group,
+                    "securityOptions": this.pass_option,
                     "mergeFieldInfo": this.merge_field_group
                 }
             };
@@ -179,6 +242,8 @@ class Workflow {
                     "fileInfos": this.file_infos,
                     "name": this.agreement_name,
                     "recipientsListInfo": this.recipients_list,
+                    "ccs": this.carbon_copy_group,
+                    "securityOptions": this.pass_option,
                     "mergeFieldInfo": this.merge_field_group,
                     "daysUntilSigningDeadline": this.deadline
                 }

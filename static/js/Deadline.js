@@ -54,7 +54,7 @@ class Deadline {
 
         // Create the label for the checkbox
         var label = document.createElement('label')
-        label.className = "deadline_input";
+        label.className = "checkbox_input";
         label.htmlFor = "deadline_checkbox";
 
         // Append to parent

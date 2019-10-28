@@ -10,6 +10,8 @@ class DynamicForm {
         this.merge_fields = [];
         this.deadline = null;
         this.features = features;
+        this.cc_group = [];
+        this.pass_option = "";
     }
 
     async buildRecipientsForm() {
@@ -20,9 +22,11 @@ class DynamicForm {
         // Clear out the old dynamic form
         this.removeRecipientForm('agreement_section');
         this.removeRecipientForm('recipient_section');
+        this.removeRecipientForm('cc_section');
         this.removeRecipientForm('upload_section');
         this.removeRecipientForm('merge_section');
         this.removeRecipientForm('deadline_section');
+        this.removeRecipientForm('send_options_section')
         this.removeRecipientForm('button_section');
 
         // Get workflow information
@@ -34,6 +38,8 @@ class DynamicForm {
         let hide_all_trigger = this.setHideAllTrigger(hide_predefined_setting, hidden_list);
         let hide_predefined_trigger = this.setHidePredefinedTrigger(
             hide_all_trigger, hide_predefined_setting, this.data['displayName'], hidden_list);
+
+        // TODO: set triggers for CC and Uploads
 
         this.creatAgreementLabelField();
         this.createAgreementInputField();
@@ -50,6 +56,30 @@ class DynamicForm {
             this.recipient_groups[counter].createRecipientInputField(hide_all_trigger, hide_predefined_trigger);
 
             this.recipeint_group_id++;
+        }
+
+        // Get CC Information
+        if ('ccsListInfo' in this.data) {
+            let cc_group_data = this.data['ccsListInfo'][0];
+            let cc_group_recipients = cc_group_data['defaultValue'].split(",");
+            for (let counter = 0; counter < cc_group_data['maxListCount']; counter++) {
+                // If cc group is editable we create the max # of cc recipients
+                if (cc_group_data['editable']) {
+                    this.cc_group.push(new CarbonCopy(this.parent_div, cc_group_recipients[counter], (counter + 1)))
+                    this.cc_group[counter].createCcDiv();
+                    this.cc_group[counter].createCcLabelField();
+                    this.cc_group[counter].createCcInputField();
+                }
+                // If not editable only create the predefine ones
+                else {
+                    if (counter < cc_group_recipients.length) {
+                        this.cc_group.push(new CarbonCopy(this.parent_div, cc_group_recipients[counter], (counter + 1)))
+                        this.cc_group[counter].createCcDiv();
+                        this.cc_group[counter].createCcLabelField();
+                        this.cc_group[counter].createCcInputField();
+                    }
+                }
+            }
         }
 
         // Get FileInfo information
@@ -75,16 +105,24 @@ class DynamicForm {
 
         // Get Deadline information
         this.deadline = new Deadline(this.parent_div, this.data['expirationInfo']);
-        if(this.deadline.visable){
+        if (this.deadline.visable) {
             this.deadline.createDeadlineDiv();
             this.deadline.createCheckbox();
             this.deadline.createSubDiv();
         }
 
+        // Get Password information
+        if (this.data['passwordInfo'].visible) {
+            this.pass_option = new PassOption(this.parent_div, this.data['passwordInfo']);
+            this.pass_option.createPassDiv();
+            this.pass_option.createCheckbox();
+            this.pass_option.createSubPassDiv();
+        }
+
         this.createRecipientFormButton(this.agreement_data, this.workflow_data);
     }
 
-    async getHidePredefinedSetting(){
+    async getHidePredefinedSetting() {
         /***
          * This function gets the hide_predefined setting from the config file
          */
@@ -94,7 +132,7 @@ class DynamicForm {
         return hide_predefined_setting['hide_predefined'];
     }
 
-    async getHiddenWorkflowList(){
+    async getHiddenWorkflowList() {
         /***
          * This function gets the hide_workflow_list from the config file
          */
@@ -104,7 +142,7 @@ class DynamicForm {
         return feature['hide_workflow_list'];
     }
 
-    async setHideAllTrigger(settings, hidden_list){
+    async setHideAllTrigger(settings, hidden_list) {
         /***
          * This function sets the hide all trigger for predefined workflows.
          * @param {Object} setting Hide_Predefined settings
@@ -115,7 +153,7 @@ class DynamicForm {
         this.hidden_list = await hidden_list;
         let hide_all_trigger = false
 
-        if(this.settings === 'yes' && this.hidden_list === null){
+        if (this.settings === 'yes' && this.hidden_list === null) {
             hide_all_trigger = true;
         }
 
@@ -123,7 +161,7 @@ class DynamicForm {
 
     }
 
-    async setHidePredefinedTrigger(hide_all_trigger, hide_predefined_setting, workflow_name, hidden_list){
+    async setHidePredefinedTrigger(hide_all_trigger, hide_predefined_setting, workflow_name, hidden_list) {
         /***
          * This function sets the hide_predefed trigger for workflows
          * @param {Object} hide_all_trigger Hide all trigger settings
@@ -136,10 +174,10 @@ class DynamicForm {
         let settings = await hide_predefined_setting;
         let list = await hidden_list;
         var hide_predefined_trigger = false;
-        
-        if(!(trigger)){
-            if(settings === 'yes'){
-                hide_predefined_trigger = list.includes(workflow_name);   
+
+        if (!(trigger)) {
+            if (settings === 'yes') {
+                hide_predefined_trigger = list.includes(workflow_name);
             }
         }
 
@@ -162,7 +200,7 @@ class DynamicForm {
         this.parent_div.children['agreement_section'].append(agreement_name_label);
     }
 
-    createAgreementInputField(){
+    createAgreementInputField() {
         /**
          * This function will create the agreement name input field
          */
@@ -202,14 +240,25 @@ class DynamicForm {
         form_button.type = "button";
         form_button.id = "recipient_submit_button";
 
+        // If password is required disable the button
+        if(this.pass_option.required){
+            form_button.disabled = true;
+        }
+
         // Add onClick event to submit button
         form_button.onclick = async function () {
             async_wf_obj.updateAgreementName();
             async_wf_obj.updateRecipientGroup(wf_data['recipientsListInfo'], this.recipient_groups);
             async_wf_obj.updateFileInfos(this.file_info);
             async_wf_obj.updateMergeFieldInfos(this.merge_fields);
-            if(this.deadline.checked){
+            async_wf_obj.createOpenPass(this.pass_option.getPass(), this.pass_option.getProtection());
+
+            if (this.deadline.checked) {
                 async_wf_obj.updateDeadline(this.deadline.today_date);
+            }
+
+            if ('ccsListInfo' in wf_data) {
+                async_wf_obj.updateCcGroup(wf_data['ccsListInfo'][0], this.cc_group);
             }
 
             var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
@@ -222,14 +271,14 @@ class DynamicForm {
             }).then(function (resp) {
                 return resp.json()
             })
-            .then(function (data) {
-                return data;
-            });
+                .then(function (data) {
+                    return data;
+                });
 
-            if('url' in response){
+            if ('url' in response) {
                 alert('Agreement Sent');
                 window.location.reload();
-            }else{
+            } else {
                 async_wf_obj.clearData();
                 alert(response['message']);
             }

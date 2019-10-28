@@ -9,7 +9,7 @@ class PassOption{
         this.sub_target_div = "";
         this.input_type = "password";
         this.disabled_button = false;
-        this.required = false;
+        this.checked = false;
     }
 
     createPassDiv(){
@@ -41,27 +41,32 @@ class PassOption{
         // Add attributes
         checkbox.type = "checkbox";
         checkbox.name = "pass_checkbox";
-        checkbox.value = "true";
         checkbox.id = "pass_checkbox";
+
+        if(this.required){
+            this.checked = true;
+            checkbox.checked = true;
+            checkbox.disabled = true;
+            this.disabled_button = true;
+        }
 
         // Add onclick functions
         checkbox.onclick = function (){
             // Hide sub pass div
             if(document.getElementById("pass_checkbox").checked === true){
                 document.getElementById('sub_pass_div').hidden = false;
+                this.checked = true;
 
                 // Disable button on empty
                 if(document.getElementById("Password").value.length === 0){
                     document.getElementById('recipient_submit_button').disabled = true;
                 }
 
-                this.required == true;
                 // Reenable submit button if it's disabled
                 if (this.disabled_button){
                     var submit_button = document.getElementById('recipient_submit_button');
                     submit_button.disabled = true;
                     this.disabled_button = false;
-                    
                 }
             }
             // Show sub pass div
@@ -69,7 +74,7 @@ class PassOption{
                 document.getElementById('sub_pass_div').hidden = true;
                 var submit_button = document.getElementById('recipient_submit_button');
                 submit_button.disabled = false;
-                this.required = false;
+                this.checked = false;;
             }
         }.bind(this)
 
@@ -93,7 +98,12 @@ class PassOption{
         var sub_pass_div = document.createElement('div');
         
         // Add attributes
-        sub_pass_div.hidden = true;
+        if(this.required){
+            sub_pass_div.hidden = false;
+        }
+        else{
+            sub_pass_div.hidden = true;
+        }
         sub_pass_div.id = "sub_pass_div";
         sub_pass_div.className = "add_border_bottom";
         this.parent_div.children['send_options_section'].append(sub_pass_div);
@@ -200,7 +210,6 @@ class PassOption{
         // Get divs for validations
         var pass_input = document.getElementById('Password');
         var confirm_input = document.getElementById('Confirm Password');
-        var checkbox = document.getElementById('pass_checkbox')
 
         // Add validation functions
         this.getValidation(pass_input, label);
@@ -239,7 +248,7 @@ class PassOption{
         /***
          * This function returns the pass
          */
-        if(this.required){
+        if(this.checked){
             return document.getElementById('Password').value;
         }
         else{
