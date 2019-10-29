@@ -20,7 +20,9 @@ class MergeField{
 
         // Add attributes
         merge_field_div.id = "merge_" + this.field_name;
-        this.parent_div.children['merge_section'].append(merge_field_div);
+
+        var parent_div = document.getElementById('merge_section')
+        parent_div.append(merge_field_div);
 
         // Append to parent
         this.target_div = merge_field_div;

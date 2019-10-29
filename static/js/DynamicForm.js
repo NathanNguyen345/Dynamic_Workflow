@@ -21,13 +21,13 @@ class DynamicForm {
 
         // Clear out the old dynamic form
         this.removeRecipientForm('message_section');
-        this.removeRecipientForm('agreement_section');
         this.removeRecipientForm('recipient_section');
         this.removeRecipientForm('cc_section');
+        this.removeRecipientForm('agreement_section');
         this.removeRecipientForm('upload_section');
         this.removeRecipientForm('merge_section');
         this.removeRecipientForm('deadline_section');
-        this.removeRecipientForm('send_options_section')
+        this.removeRecipientForm('send_options_section');
         this.removeRecipientForm('button_section');
 
         // Get workflow information
@@ -41,7 +41,6 @@ class DynamicForm {
             hide_all_trigger, hide_predefined_setting, this.data['displayName'], hidden_list);
 
         // TODO: set triggers for CC and Uploads
-
         this.createInstructionField(this.data['description']);
         this.createMessageInput();
         this.creatAgreementLabelField();
@@ -53,7 +52,7 @@ class DynamicForm {
             let recipient_group_data = this.data['recipientsListInfo'][counter];
 
             this.recipient_groups.push(new RecipientGroup(
-                this.recipeint_group_id, this.parent_div, recipient_group_data));
+                this.recipeint_group_id, this.parent_div.children[1].children, recipient_group_data));
             this.recipient_groups[counter].createRecipientDiv();
             this.recipient_groups[counter].createRecipientLabelField();
             this.recipient_groups[counter].createRecipientInputField(hide_all_trigger, hide_predefined_trigger);
@@ -68,7 +67,7 @@ class DynamicForm {
             for (let counter = 0; counter < cc_group_data['maxListCount']; counter++) {
                 // If cc group is editable we create the max # of cc recipients
                 if (cc_group_data['editable']) {
-                    this.cc_group.push(new CarbonCopy(this.parent_div, cc_group_recipients[counter], (counter + 1)))
+                    this.cc_group.push(new CarbonCopy(this.parent_div.children[0], cc_group_recipients[counter], (counter + 1)))
                     this.cc_group[counter].createCcDiv();
                     this.cc_group[counter].createCcLabelField();
                     this.cc_group[counter].createCcInputField();
@@ -76,7 +75,7 @@ class DynamicForm {
                 // If not editable only create the predefine ones
                 else {
                     if (counter < cc_group_recipients.length) {
-                        this.cc_group.push(new CarbonCopy(this.parent_div, cc_group_recipients[counter], (counter + 1)))
+                        this.cc_group.push(new CarbonCopy(this.parent_div.children[0], cc_group_recipients[counter], (counter + 1)))
                         this.cc_group[counter].createCcDiv();
                         this.cc_group[counter].createCcLabelField();
                         this.cc_group[counter].createCcInputField();
@@ -89,7 +88,7 @@ class DynamicForm {
         for (let counter = 0; counter < this.data['fileInfos'].length; counter++) {
             let file = this.data['fileInfos'][counter];
             this.file_info.push(new FileInfo(
-                this.parent_div, file['name'], file['label'], file['required'], file['workflowLibraryDocumentSelectorList']));
+                this.parent_div.children[1], file['name'], file['label'], file['required'], file['workflowLibraryDocumentSelectorList']));
             this.file_info[counter].createFileInfoDiv();
             this.file_info[counter].createDocumentTitleLabel();
             this.file_info[counter].createFileLabelName(this.file_info[counter]['required']);
@@ -99,7 +98,7 @@ class DynamicForm {
         if ('mergeFieldsInfo' in this.data) {
             for (let counter = 0; counter < this.data['mergeFieldsInfo'].length; counter++) {
                 let merge_field_data = this.data['mergeFieldsInfo'][counter];
-                this.merge_fields.push(new MergeField(this.parent_div, merge_field_data));
+                this.merge_fields.push(new MergeField(this.parent_div.children[1], merge_field_data));
                 this.merge_fields[counter].createMergeFieldDiv();
                 this.merge_fields[counter].createMergeFieldLabel();
                 this.merge_fields[counter].createMergeFieldInput();
@@ -107,7 +106,7 @@ class DynamicForm {
         }
 
         // Get Deadline information
-        this.deadline = new Deadline(this.parent_div, this.data['expirationInfo']);
+        this.deadline = new Deadline(this.parent_div.children[1], this.data['expirationInfo']);
         if (this.deadline.visable) {
             this.deadline.createDeadlineDiv();
             this.deadline.createCheckbox();
@@ -116,7 +115,7 @@ class DynamicForm {
 
         // Get Password information
         if (this.data['passwordInfo'].visible) {
-            this.pass_option = new PassOption(this.parent_div, this.data['passwordInfo']);
+            this.pass_option = new PassOption(this.parent_div.children[1], this.data['passwordInfo']);
             this.pass_option.createPassDiv();
             this.pass_option.createCheckbox();
             this.pass_option.createSubPassDiv();
@@ -200,7 +199,7 @@ class DynamicForm {
         agreement_name_label.className = 'recipient_label';
 
         // Append to parent
-        this.parent_div.children['message_section'].append(agreement_name_label);
+        this.parent_div.children[0].children['message_section'].append(agreement_name_label);
 
     }
 
@@ -225,7 +224,7 @@ class DynamicForm {
         // }
 
         // Append to parent
-        this.parent_div.children['message_section'].append(agreement_name_input);
+        this.parent_div.children[0].children['message_section'].append(agreement_name_input);
 
     }
 
@@ -242,7 +241,8 @@ class DynamicForm {
         agreement_name_label.className = 'recipient_label';
 
         // Append to parent
-        this.parent_div.children['agreement_section'].append(agreement_name_label);
+        var target_div = document.getElementById('agreement_section')
+        target_div.append(agreement_name_label);
     }
 
     createAgreementInputField() {
@@ -266,7 +266,8 @@ class DynamicForm {
         }
 
         // Append to parent
-        this.parent_div.children['agreement_section'].append(agreement_name_input);
+        var target_div = document.getElementById('agreement_section')
+        target_div.append(agreement_name_input);
     }
 
     async createRecipientFormButton(workflow_object, workflow_data) {
@@ -333,7 +334,7 @@ class DynamicForm {
         }.bind(this);
 
         // Add button to the parent div
-        this.parent_div.children['button_section'].append(form_button);
+        this.parent_div.children[1].children['button_section'].append(form_button);
     }
 
     removeRecipientForm(target_div) {
@@ -342,7 +343,7 @@ class DynamicForm {
          * @param {Object} target_div The div to the dynamic form
          */
 
-        var removed_div = this.parent_div.children[target_div];
+        var removed_div = document.getElementById(target_div);
 
         while (removed_div.firstChild) {
             removed_div.removeChild(removed_div.firstChild)

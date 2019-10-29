@@ -19,7 +19,9 @@ class CarbonCopy{
         // Add attributes
         cc_div.id = "cc_div_" + this.id;
         cc_div.className = "add_border_bottom";
-        this.parent_div.children['cc_section'].append(cc_div);
+
+        var parent_div = document.getElementById('cc_section')
+        parent_div.append(cc_div);
 
         // Append to parent
         this.target_div = cc_div;

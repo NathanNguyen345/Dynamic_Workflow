@@ -20,7 +20,9 @@ class RecipientGroup{
         // Add attributes
         recipient_div.id = "recipient_group_" + this.group_id;
         recipient_div.className = "add_border_bottom";
-        this.parent_div.children['recipient_section'].append(recipient_div);
+        
+        var parent_div = document.getElementById('recipient_section')
+        parent_div.append(recipient_div);
 
         // Append to parent
         this.target_div = recipient_div;

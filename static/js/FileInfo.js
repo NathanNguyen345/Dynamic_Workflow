@@ -21,7 +21,9 @@ class FileInfo {
 
         // Assign the attributes
         file_info_div.id = "file_info_" + this.file_name;
-        this.parent_div.children['upload_section'].append(file_info_div);
+
+        var parent_div = document.getElementById('upload_section')
+        parent_div.append(file_info_div);
 
         // Append element to parent
         this.target_div = file_info_div;
