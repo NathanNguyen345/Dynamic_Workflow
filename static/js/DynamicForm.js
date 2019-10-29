@@ -20,6 +20,7 @@ class DynamicForm {
          */
 
         // Clear out the old dynamic form
+        this.removeRecipientForm('message_section');
         this.removeRecipientForm('agreement_section');
         this.removeRecipientForm('recipient_section');
         this.removeRecipientForm('cc_section');
@@ -41,6 +42,8 @@ class DynamicForm {
 
         // TODO: set triggers for CC and Uploads
 
+        this.createInstructionField(this.data['description']);
+        this.createMessageInput();
         this.creatAgreementLabelField();
         this.createAgreementInputField();
 
@@ -184,6 +187,48 @@ class DynamicForm {
         return hide_predefined_trigger;
     }
 
+    createInstructionField(msg){
+        /**
+         * This function will create the agreement name label
+         */
+
+        // Create element
+        var agreement_name_label = document.createElement('h3');
+
+        // Assign properties
+        agreement_name_label.innerHTML = msg;
+        agreement_name_label.className = 'recipient_label';
+
+        // Append to parent
+        this.parent_div.children['message_section'].append(agreement_name_label);
+
+    }
+
+    createMessageInput(){
+        /**
+         * This function will create the agreement name input field
+         */
+
+        // Create element
+        var agreement_name_input = document.createElement('input');
+
+        // Assign properties
+        agreement_name_input.id = "messages";
+        agreement_name_input.name = 'messages';
+        agreement_name_input.placeholder = "Message";
+        agreement_name_input.className = 'recipient_form_input';
+        agreement_name_input.value = this.data['messageInfo']['defaultValue'];
+
+        // // Check to see if there's a default value
+        // if (this.data['agreementNameInfo']['defaultValue'] !== null) {
+        //     agreement_name_input.value = this.data['agreementNameInfo']['defaultValue'];
+        // }
+
+        // Append to parent
+        this.parent_div.children['message_section'].append(agreement_name_input);
+
+    }
+
     creatAgreementLabelField() {
         /**
          * This function will create the agreement name label
@@ -251,7 +296,10 @@ class DynamicForm {
             async_wf_obj.updateRecipientGroup(wf_data['recipientsListInfo'], this.recipient_groups);
             async_wf_obj.updateFileInfos(this.file_info);
             async_wf_obj.updateMergeFieldInfos(this.merge_fields);
-            async_wf_obj.createOpenPass(this.pass_option.getPass(), this.pass_option.getProtection());
+
+            if (wf_data['passwordInfo'].visible) {
+                async_wf_obj.createOpenPass(this.pass_option.getPass(), this.pass_option.getProtection());
+            }
 
             if (this.deadline.checked) {
                 async_wf_obj.updateDeadline(this.deadline.today_date);

@@ -37,22 +37,28 @@ class Workflow {
          * @param {Object} recipient_group The current group of the recipients being added
          */
 
+        // Go through API recipients
         for (let i = 0; i < recipient_group_data.length; i++) {
             if (recipient_group_data[i]['defaultValue'] === "") {
                 if (recipient_group_data[i]['maxListCount'] !== 1) {
                     let addition_recipient = recipient_groups[i]['target_div'].querySelectorAll('input');
 
                     for (let recipient_counter = 0; recipient_counter < addition_recipient.length; recipient_counter++) {
-                        this.addToRecipientGroup(addition_recipient[recipient_counter].value);
+                        this.addToRecipientGroup(addition_recipient[recipient_counter].email);
                     }
                 } else {
                     let recipient_id = document.getElementById("recipient_" + i);
-                    this.addToRecipientGroup(recipient_id.value);
+                    this.addToRecipientGroup(recipient_id.email);
                 }
-            } else {
-                this.addToRecipientGroup(recipient_group_data[i]['defaultValue'])
+            } 
+            else {
+                if(recipient_group_data[i]['editable']){
+                    this.addToRecipientGroup(recipient_groups[i].email)
+                }
+                else{
+                    this.addToRecipientGroup(recipient_group_data[i]['defaultValue'])
+                }
             }
-
             this.addToRecipientsList(recipient_group_data[i]['name']);
             this.clearRecipientGroup();
         }

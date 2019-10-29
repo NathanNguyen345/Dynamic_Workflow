@@ -4,7 +4,6 @@ class Deadline {
         this.parent_div = parent_div;
         this.target_div = "";
         this.sub_div = "";
-        this.required = deadline_data['required'];
         this.default_value = deadline_data['defaultValue'];
         this.editable = deadline_data['editable'];
         this.visable = deadline_data['visible'];
