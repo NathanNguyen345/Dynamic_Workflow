@@ -12,6 +12,7 @@ class DynamicForm {
         this.features = features;
         this.cc_group = [];
         this.pass_option = "";
+        this.reminders = "";
     }
 
     async buildRecipientsForm() {
@@ -20,15 +21,20 @@ class DynamicForm {
          */
 
         // Clear out the old dynamic form
-        this.removeRecipientForm('message_section');
+        this.removeRecipientForm('instruction_section');
         this.removeRecipientForm('recipient_section');
         this.removeRecipientForm('cc_section');
         this.removeRecipientForm('agreement_section');
+        this.removeRecipientForm('message_section');
         this.removeRecipientForm('upload_section');
         this.removeRecipientForm('merge_section');
         this.removeRecipientForm('deadline_section');
+        this.removeRecipientForm('reminder_section');
         this.removeRecipientForm('send_options_section');
-        this.removeRecipientForm('button_section');
+        this.removeRecipientForm('form_submit');
+
+        // Hide merge
+        document.getElementById('merge_section').hidden = true;
 
         // Get workflow information
         this.data = await this.workflow_data;
@@ -40,11 +46,16 @@ class DynamicForm {
         let hide_predefined_trigger = this.setHidePredefinedTrigger(
             hide_all_trigger, hide_predefined_setting, this.data['displayName'], hidden_list);
 
-        // TODO: set triggers for CC and Uploads
+        // Build Form Body
         this.createInstructionField(this.data['description']);
-        this.createMessageInput();
         this.creatAgreementLabelField();
         this.createAgreementInputField();
+        this.creatMessageLabelField();
+        this.createMessageInput();
+        this.createLayoutDivs("upload");
+        this.createHeaderLabel("upload", "Files");
+        this.createLayoutDivs("merge");
+        this.createHeaderLabel("merge", "Fields");
 
         // Get Recipient Information
         for (let counter = 0; counter < this.data['recipientsListInfo'].length; counter++) {
@@ -96,6 +107,7 @@ class DynamicForm {
 
         // Get merged field information
         if ('mergeFieldsInfo' in this.data) {
+            document.getElementById('merge_section').hidden = false;
             for (let counter = 0; counter < this.data['mergeFieldsInfo'].length; counter++) {
                 let merge_field_data = this.data['mergeFieldsInfo'][counter];
                 this.merge_fields.push(new MergeField(this.parent_div.children[1], merge_field_data));
@@ -106,11 +118,13 @@ class DynamicForm {
         }
 
         // Get Deadline information
-        this.deadline = new Deadline(this.parent_div.children[1], this.data['expirationInfo']);
-        if (this.deadline.visable) {
-            this.deadline.createDeadlineDiv();
-            this.deadline.createCheckbox();
-            this.deadline.createSubDiv();
+        if( 'expirationInfo' in this.data){
+            this.deadline = new Deadline(this.parent_div.children[1], this.data['expirationInfo']);
+            if (this.deadline.visable) {
+                this.deadline.createDeadlineDiv();
+                this.deadline.createCheckbox();
+                this.deadline.createSubDiv();
+            }
         }
 
         // Get Password information
@@ -121,7 +135,16 @@ class DynamicForm {
             this.pass_option.createSubPassDiv();
         }
 
+        // Get Reminder information
+        this.reminders = new Reminder(this.parent_div.children[1]);
+        this.reminders.createReminderDiv();
+        this.reminders.createReminderbox();
+        this.reminders.createSubDiv();
+
         this.createRecipientFormButton(this.agreement_data, this.workflow_data);
+    
+        var test = document.getElementById('dynamic_form');
+        test.hidden = false;
     }
 
     async getHidePredefinedSetting() {
@@ -192,15 +215,31 @@ class DynamicForm {
          */
 
         // Create element
-        var agreement_name_label = document.createElement('h3');
+        var instruction_label = document.createElement('h3');
 
         // Assign properties
-        agreement_name_label.innerHTML = msg;
-        agreement_name_label.className = 'recipient_label';
+        instruction_label.innerHTML = msg;
+        instruction_label.className = 'recipient_label';
 
         // Append to parent
-        this.parent_div.children[0].children['message_section'].append(agreement_name_label);
+        document.getElementById('instruction_section').append(instruction_label);
 
+    }
+
+    creatMessageLabelField() {
+        /**
+         * This function will create the agreement name label
+         */
+
+        // Create element
+        var message_label = document.createElement('h3');
+
+        // Assign properties
+        message_label.innerHTML = "Messages";
+        message_label.className = 'recipient_label';
+
+        // Append to parent
+        document.getElementById('message_section').append(message_label);
     }
 
     createMessageInput(){
@@ -209,22 +248,23 @@ class DynamicForm {
          */
 
         // Create element
-        var agreement_name_input = document.createElement('input');
+        var message_input = document.createElement('textarea');
 
         // Assign properties
-        agreement_name_input.id = "messages";
-        agreement_name_input.name = 'messages';
-        agreement_name_input.placeholder = "Message";
-        agreement_name_input.className = 'recipient_form_input';
-        agreement_name_input.value = this.data['messageInfo']['defaultValue'];
+        message_input.id = "messages_input";
+        message_input.name = 'messages_input';
+        message_input.rows = 3;
+        message_input.placeholder = "Message";
+        message_input.className = 'recipient_form_input';
+        message_input.value = this.data['messageInfo']['defaultValue'];
 
-        // // Check to see if there's a default value
-        // if (this.data['agreementNameInfo']['defaultValue'] !== null) {
-        //     agreement_name_input.value = this.data['agreementNameInfo']['defaultValue'];
-        // }
+        // Check to see if there's a default value
+        if (this.data['messageInfo']['defaultValue'] !== null) {
+            message_input.value = this.data['messageInfo']['defaultValue'];
+        }
 
         // Append to parent
-        this.parent_div.children[0].children['message_section'].append(agreement_name_input);
+        document.getElementById('message_section').append(message_input);
 
     }
 
@@ -270,6 +310,42 @@ class DynamicForm {
         target_div.append(agreement_name_input);
     }
 
+    createLayoutDivs(name){
+        /***
+         * This function will create the file info div
+         */
+
+        // Create the element
+        var file_header_div = document.createElement('div');
+        var file_body_div = document.createElement('div');
+
+        // Assign the attributes
+        file_header_div.id = name + "_header";
+        file_body_div.id = name + "_body";
+
+        // Append
+        var parent_div = document.getElementById(name + '_section')
+        parent_div.append(file_header_div);
+        parent_div.append(file_body_div);
+    }
+
+    createHeaderLabel(name, inner_html){
+        /***
+         * This function will append the file label to the file header
+         */
+
+        // Create the element
+        var file_header_label = document.createElement('h3');
+
+        // Assign the attributes
+        file_header_label.id = name + "_header_label";
+        file_header_label.className = "recipient_label";
+        file_header_label.innerHTML = inner_html;
+
+        // Append
+        document.getElementById(name + '_header').append(file_header_label);
+    }
+
     async createRecipientFormButton(workflow_object, workflow_data) {
         /***
          * This function will create submit button on the dynamic form
@@ -297,6 +373,8 @@ class DynamicForm {
             async_wf_obj.updateRecipientGroup(wf_data['recipientsListInfo'], this.recipient_groups);
             async_wf_obj.updateFileInfos(this.file_info);
             async_wf_obj.updateMergeFieldInfos(this.merge_fields);
+            async_wf_obj.updateReminder(this.reminders);
+            async_wf_obj.updateMessage(document.getElementById('messages_input').value);
 
             if (wf_data['passwordInfo'].visible) {
                 async_wf_obj.createOpenPass(this.pass_option.getPass(), this.pass_option.getProtection());
@@ -310,31 +388,31 @@ class DynamicForm {
                 async_wf_obj.updateCcGroup(wf_data['ccsListInfo'][0], this.cc_group);
             }
 
-            var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(async_wf_obj.jsonData())
-            }).then(function (resp) {
-                return resp.json()
-            })
-                .then(function (data) {
-                    return data;
-                });
+            // var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
+            //     method: 'POST',
+            //     headers: {
+            //         Accept: 'application/json',
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(async_wf_obj.jsonData())
+            // }).then(function (resp) {
+            //     return resp.json()
+            // })
+            //     .then(function (data) {
+            //         return data;
+            //     });
 
-            if ('url' in response) {
-                alert('Agreement Sent');
-                window.location.reload();
-            } else {
-                async_wf_obj.clearData();
-                alert(response['message']);
-            }
+            // if ('url' in response) {
+            //     alert('Agreement Sent');
+            //     window.location.reload();
+            // } else {
+            //     async_wf_obj.clearData();
+            //     alert(response['message']);
+            // }
         }.bind(this);
 
         // Add button to the parent div
-        this.parent_div.children[1].children['button_section'].append(form_button);
+        this.parent_div.children['form_submit'].append(form_button);
     }
 
     removeRecipientForm(target_div) {

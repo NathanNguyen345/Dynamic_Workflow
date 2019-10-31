@@ -26,7 +26,7 @@ class MergeField{
         var merge_field_col_8 = document.createElement('div');
         merge_field_col_8.className = "col-lg-8";
 
-        var parent_div = document.getElementById('merge_section')
+        var parent_div = document.getElementById('merge_body')
         parent_div.append(merge_field_div);
 
         // Append to parent
@@ -73,7 +73,6 @@ class MergeField{
 
         // Append to parents
         this.target_div.children[1].append(merge_field_input);
-        // this.target_div.append(merge_field_input);
     }
 
 }

@@ -31,6 +31,13 @@ function runWorkflow() {
     // Get workflow ID
     var workflow_id = getWorkflowId();
 
+    var test = document.getElementById('dynamic_form');
+    test.hidden = true;
+
+    // // Hide Fields
+    // var temp = document.getElementsByClassName('option_wrapper');
+    // temp[0].hidden = true;
+
     // Fetch workflow data by ID
     var workflow_data = fetch('/api/getWorkflowById/' + workflow_id)
         .then(function (resp) {

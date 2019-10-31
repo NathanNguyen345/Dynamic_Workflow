@@ -125,6 +125,7 @@ class Deadline {
         deadline_input.type = "date";
         deadline_input.name = "deadline_input";
         deadline_input.id = "deadline_input";
+        deadline_input.className = 'recipient_form_input'
 
         this.setDateValues(deadline_input);
         this.sub_div.append(deadline_input);

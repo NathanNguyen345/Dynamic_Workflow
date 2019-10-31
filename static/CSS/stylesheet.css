@@ -95,6 +95,7 @@ h4{
 
 #workflow_dropdown{
     font-size: 14px;
+    border-radius: 1px;
 }
 
 /********** dynamic_form **********/
@@ -104,6 +105,7 @@ h4{
 
 #agreement_section{
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .recipient_label{
@@ -116,6 +118,7 @@ h4{
     background-color: white;
     margin-bottom: 5px;
     border: solid 1px #c2c2c2;
+    border-radius: 5px;
 }
 
 #recipient_submit_button{
@@ -156,11 +159,21 @@ h4{
     font-size: 16px;
 }
 
+#message_section{
+    margin-bottom: 10px;
+}
+
 .error_msg{
     color: red;
 }
 
-.merge_div{
+.file_info_div h3{
+    margin-top: 10px;
+}
+
+.file_info_div h4{
+    margin: auto;
+    width: 95%;
     padding: 10px;
 }
 
@@ -168,22 +181,50 @@ h4{
     width: 100%;
 }
 
-
-/**** New ****/
-#upload_section{
-    border: 1px solid #c2c2c2;
-    padding: 5px;
+.merge_div h3{
+    margin-top: 10px;
 }
 
-#options{
-    top: 37px;
+#merge_body{
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.merge_div{
+    padding: 10px;
+}
+
+#button_section{
+    width: 100%;
+}
+
+.upload_section h3{
+    margin-top: 10px;
+}
+
+#upload_body{
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.option_wrapper{
+    margin-top: 37px;
     border: 1px solid #c2c2c2;
     background-color: #f5f5f5;
+    border-radius: 5px;
     padding: 15px;
 }
 
-#merge_section{
-    border: 1px solid #c2c2c2;
+#deadline_input{
+    width: 100%;
+}
+
+#reminder_dropdown{
+    width: 100%;
 }
 
 @media only screen and (max-width: 600px) {

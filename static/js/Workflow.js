@@ -10,6 +10,8 @@ class Workflow {
         this.merge_field_group = [];
         this.pass_option = "";
         this.deadline = "";
+        this.reminders = "";
+        this.message = "";
     }
 
     setAgreementName(agreement_name) {
@@ -213,6 +215,27 @@ class Workflow {
         this.pass_option = data;
     }
 
+    updateReminder(reminder){
+        /***
+         * Thie function update the reminder API key.
+         * @param {Object} reminder Reminder object created in dynamic form
+         */
+
+        if(reminder.checked){
+            this.reminders = reminder_dropdown.value;
+        }
+    }
+
+    updateMessage(msg){
+        /***
+         * This section will update the message for the API dynamic form.
+         * @param {String} msg Message set in the dynamic form
+         */
+
+        this.message = msg;
+        console.log(this.message);
+    }
+
     clearData(){
         /***
          * This function clears data from the workflow.
@@ -238,7 +261,9 @@ class Workflow {
                     "recipientsListInfo": this.recipients_list,
                     "ccs": this.carbon_copy_group,
                     "securityOptions": this.pass_option,
-                    "mergeFieldInfo": this.merge_field_group
+                    "mergeFieldInfo": this.merge_field_group,
+                    "reminderFrequency": this.reminders,
+                    "message": this.msg
                 }
             };
         }
@@ -251,7 +276,9 @@ class Workflow {
                     "ccs": this.carbon_copy_group,
                     "securityOptions": this.pass_option,
                     "mergeFieldInfo": this.merge_field_group,
-                    "daysUntilSigningDeadline": this.deadline
+                    "daysUntilSigningDeadline": this.deadline,
+                    "reminderFrequency": this.reminders,
+                    "message": this.msg
                 }
             };
         }
