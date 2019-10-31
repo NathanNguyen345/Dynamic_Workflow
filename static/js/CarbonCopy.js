@@ -43,27 +43,24 @@ class CarbonCopy{
         this.target_div.append(label);
     }
 
-    createCcInputField(){
+    async createCcInputField(hide_all, hide_predefined){
         /***
          * This function adds recipients input field
          */
+
+        // Set features
+        let hide_all_trigger = await hide_all;
+        let hide_predefined_trigger = await hide_predefined;
 
         // Create the element
         var input = document.createElement("input");
 
         // Add Attributes
         input.type = "text";
-        input.id = 'cc_123' + this.id;
+        input.id = 'cc_' + this.id;
         input.name = 'cc_' + this.id;
         input.className = 'recipient_form_input';
         input.placeholder = "Enter Cc's Email";
-
-        // Add predefine tags
-        if( typeof this.email !== "undefined"){
-            input.value = this.email;
-            input.className = input.className + " predefined_input";
-            this.predefined = true;
-        }
 
         // Add on change event to update user email
         input.onchange = function(){
@@ -72,5 +69,24 @@ class CarbonCopy{
 
         // Append to parent
         this.target_div.append(input);
+
+        // Add predefine tags
+        if( typeof this.email !== "undefined"){
+            input.value = this.email;
+            input.className = input.className + " predefined_input";
+            this.predefined = true;
+
+            // Hide all settings turned on
+            if(hide_all_trigger && !(hide_predefined_trigger)){
+                var recipient_div = document.getElementById("cc_div_" + this.id);
+                recipient_div.className = 'recipient_hidden';
+            }
+
+            // Hide only defined workflows in config file
+            else if(!(hide_all_trigger) && hide_predefined_trigger){
+                var recipient_div = document.getElementById("cc_div_" + this.id);
+                recipient_div.className = 'recipient_hidden';
+            }
+        }
     }
 }

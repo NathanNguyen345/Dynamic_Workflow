@@ -231,22 +231,39 @@ h4{
     #workflow_form{
         width: 100vw;
     }
+
+    .option_wrapper{
+        margin: 10px 0 10px 0;
+    }
 }
 
 @media only screen and (min-width: 600px) {
     #workflow_form{
         width: 100vw;
     }
+
+    .option_wrapper{
+        margin: 10px 0 10px 0;
+    }
+    
 }
 
 @media only screen and (min-width: 798) {
     #workflow_form{
         width: 60vw;
     }
+
+    .option_wrapper{
+        margin-top: 37px;
+    }
 }
 
 @media only screen and (min-width: 992px) {
     #workflow_form{
         width: 60vw;
+    }
+
+    .option_wrapper{
+        margin-top: 37px;
     }
 }

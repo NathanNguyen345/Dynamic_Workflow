@@ -40,11 +40,18 @@ class DynamicForm {
         this.data = await this.workflow_data;
 
         // Set up triggers for features in config
-        let hide_predefined_setting = this.getHidePredefinedSetting();
-        let hidden_list = this.getHiddenWorkflowList();
+        let hide_predefined_setting = this.getHidePredefinedSetting('hide_predefined');
+        let hidden_list = this.getHiddenWorkflowList('hide_workflow_list');
         let hide_all_trigger = this.setHideAllTrigger(hide_predefined_setting, hidden_list);
         let hide_predefined_trigger = this.setHidePredefinedTrigger(
             hide_all_trigger, hide_predefined_setting, this.data['displayName'], hidden_list);
+        
+        // Set up cc triggers for features in configs
+        let hide_cc_settings = this.getHidePredefinedSetting('hide_cc');
+        let hide_cc_list = this.getHiddenWorkflowList('hide_cc_workflow_list');
+        let hide_all_cc_trigger = this.setHideAllTrigger(hide_cc_settings, hide_cc_list);
+        let hide_cc_predefined_trigger = this.setHidePredefinedTrigger(
+            hide_all_cc_trigger, hide_cc_settings, this.data['displayName'], hide_cc_list);
 
         // Build Form Body
         this.createInstructionField(this.data['description']);
@@ -81,7 +88,7 @@ class DynamicForm {
                     this.cc_group.push(new CarbonCopy(this.parent_div.children[0], cc_group_recipients[counter], (counter + 1)))
                     this.cc_group[counter].createCcDiv();
                     this.cc_group[counter].createCcLabelField();
-                    this.cc_group[counter].createCcInputField();
+                    this.cc_group[counter].createCcInputField(hide_all_cc_trigger, hide_cc_predefined_trigger);
                 }
                 // If not editable only create the predefine ones
                 else {
@@ -89,7 +96,7 @@ class DynamicForm {
                         this.cc_group.push(new CarbonCopy(this.parent_div.children[0], cc_group_recipients[counter], (counter + 1)))
                         this.cc_group[counter].createCcDiv();
                         this.cc_group[counter].createCcLabelField();
-                        this.cc_group[counter].createCcInputField();
+                        this.cc_group[counter].createCcInputField(hide_all_cc_trigger, hide_cc_predefined_trigger);
                     }
                 }
             }
@@ -146,24 +153,28 @@ class DynamicForm {
         document.getElementById('dynamic_form').hidden = false;
     }
 
-    async getHidePredefinedSetting() {
+    removeDivs(){
+        
+    }
+
+    async getHidePredefinedSetting(name) {
         /***
          * This function gets the hide_predefined setting from the config file
          */
 
         let hide_predefined_setting = await this.features;
 
-        return hide_predefined_setting['hide_predefined'];
+        return hide_predefined_setting[name];
     }
 
-    async getHiddenWorkflowList() {
+    async getHiddenWorkflowList(name) {
         /***
          * This function gets the hide_workflow_list from the config file
          */
 
         let feature = await this.features;
 
-        return feature['hide_workflow_list'];
+        return feature[name];
     }
 
     async setHideAllTrigger(settings, hidden_list) {
@@ -182,7 +193,6 @@ class DynamicForm {
         }
 
         return hide_all_trigger;
-
     }
 
     async setHidePredefinedTrigger(hide_all_trigger, hide_predefined_setting, workflow_name, hidden_list) {
