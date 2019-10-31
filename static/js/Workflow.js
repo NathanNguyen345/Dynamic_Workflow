@@ -233,7 +233,6 @@ class Workflow {
          */
 
         this.message = msg;
-        console.log(this.message);
     }
 
     clearData(){
@@ -245,7 +244,6 @@ class Workflow {
         this.recipients_list = [];
         this.recipient_group = [];
         this.merge_field_group = [];
-
     }
 
     jsonData() {

@@ -11,12 +11,7 @@ const multer  = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 // HTTPS & Path
-const https = require('https');
 const path = require('path');
-// const httpsOptions = {
-//     cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
-//     key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
-// }
 
 // js-yaml
 const yaml = require('js-yaml');
@@ -179,8 +174,3 @@ app.post('/api/postTransient', upload.single('myfile'), async function (req, res
 const port = 80;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
-
-// https.createServer(httpsOptions, app)
-//     .listen(port, function () {
-//         console.log(`Server started on port ${port}`)
-//     })

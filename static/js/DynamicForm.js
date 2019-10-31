@@ -143,8 +143,7 @@ class DynamicForm {
 
         this.createRecipientFormButton(this.agreement_data, this.workflow_data);
     
-        var test = document.getElementById('dynamic_form');
-        test.hidden = false;
+        document.getElementById('dynamic_form').hidden = false;
     }
 
     async getHidePredefinedSetting() {
@@ -388,27 +387,27 @@ class DynamicForm {
                 async_wf_obj.updateCcGroup(wf_data['ccsListInfo'][0], this.cc_group);
             }
 
-            // var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
-            //     method: 'POST',
-            //     headers: {
-            //         Accept: 'application/json',
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(async_wf_obj.jsonData())
-            // }).then(function (resp) {
-            //     return resp.json()
-            // })
-            //     .then(function (data) {
-            //         return data;
-            //     });
+            var response = await fetch('/api/postAgreement/' + async_wf_obj.workflow_id, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(async_wf_obj.jsonData())
+            }).then(function (resp) {
+                return resp.json()
+            })
+                .then(function (data) {
+                    return data;
+                });
 
-            // if ('url' in response) {
-            //     alert('Agreement Sent');
-            //     window.location.reload();
-            // } else {
-            //     async_wf_obj.clearData();
-            //     alert(response['message']);
-            // }
+            if ('url' in response) {
+                alert('Agreement Sent');
+                window.location.reload();
+            } else {
+                async_wf_obj.clearData();
+                alert(response['message']);
+            }
         }.bind(this);
 
         // Add button to the parent div
