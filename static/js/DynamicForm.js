@@ -125,7 +125,7 @@ class DynamicForm {
         }
 
         // Get Deadline information
-        if( 'expirationInfo' in this.data){
+        if('expirationInfo' in this.data){
             this.deadline = new Deadline(this.parent_div.children[1], this.data['expirationInfo']);
             if (this.deadline.visable) {
                 this.deadline.createDeadlineDiv();
@@ -389,8 +389,10 @@ class DynamicForm {
                 async_wf_obj.createOpenPass(this.pass_option.getPass(), this.pass_option.getProtection());
             }
 
-            if (this.deadline.checked) {
-                async_wf_obj.updateDeadline(this.deadline.today_date);
+            if('expirationInfo' in this.data){
+                if (this.deadline.checked) {
+                    async_wf_obj.updateDeadline(this.deadline.today_date);
+                }
             }
 
             if ('ccsListInfo' in wf_data) {

@@ -41,18 +41,22 @@ class Workflow {
 
         // Go through API recipients
         for (let i = 0; i < recipient_group_data.length; i++) {
+            // If API recipients doesn't have a default value
             if (recipient_group_data[i]['defaultValue'] === "") {
+                // Check to see if user is in a recipient group
                 if (recipient_group_data[i]['maxListCount'] !== 1) {
                     let addition_recipient = recipient_groups[i]['target_div'].querySelectorAll('input');
 
                     for (let recipient_counter = 0; recipient_counter < addition_recipient.length; recipient_counter++) {
-                        this.addToRecipientGroup(addition_recipient[recipient_counter].email);
+                        this.addToRecipientGroup(addition_recipient[recipient_counter].value);
                     }
-                } else {
+                } 
+                else {
                     let recipient_id = document.getElementById("recipient_" + i);
-                    this.addToRecipientGroup(recipient_id.email);
+                    this.addToRecipientGroup(recipient_id.value);
                 }
             } 
+            // Recipient has a default value
             else {
                 if(recipient_group_data[i]['editable']){
                     this.addToRecipientGroup(recipient_groups[i].email)
